@@ -1,0 +1,8 @@
+{
+  "name": "get_best_option_buy",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:MateusHoffman/get_best_option_buy.git",
+  "author": "Hoffman <mateus.hsilva@muu.agr.br>",
+  "license": "MIT"
+}
