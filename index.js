@@ -41,13 +41,13 @@ const get_best_option_buy = async (config) => {
   );
 
   // Exibir os melhores strikes para call e put
-  console.log(`CALL - ${strikeMinCall.toFixed(2)}`, bestStrikesCall);
-  console.log(`PUT - ${strikeMinPut.toFixed(2)}`, bestStrikesPut);
+  console.log(`CALL >= ${strikeMinCall.toFixed(2)}`, bestStrikesCall);
+  console.log(`PUT <= ${strikeMinPut.toFixed(2)}`, bestStrikesPut);
 };
 
 const config = {
   TICKER: "CIEL3",
-  EXPIRATION: "19/04/2024",
+  EXPIRATION: "21/06/2024",
 };
 
 get_best_option_buy({ ...config, ...fixed });
