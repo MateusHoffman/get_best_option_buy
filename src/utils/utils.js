@@ -91,3 +91,11 @@ export function calculateStrikesByAward(numero, type, EXPECTED_RETURN_MONTH) {
     return objeto;
   }, {});
 }
+
+export function getExpectedReturnOperation(expectedReturnMonth, dateExpiration) {
+  var currentDate = moment();
+  var startDate = moment(dateExpiration, 'DD/MM/YYYY');
+  const returnPerDay = (expectedReturnMonth * 12) / 365
+  const daysDifference = startDate.diff(moment(currentDate, 'DD/MM/YYYY'), 'days');
+  return daysDifference * returnPerDay
+}
