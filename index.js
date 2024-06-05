@@ -3,6 +3,7 @@ import {
   calculateBusinessDays,
   calculateStrike,
   calculateStrikesByAward,
+  getExpectedReturnOperation,
 } from "./src/utils/utils.js";
 
 const fixed = {
@@ -28,21 +29,26 @@ const get_best_option_buy = async (config) => {
     variationMinPut
   );
 
+  const expectedReturnOperation = getExpectedReturnOperation(
+    config.EXPECTED_RETURN_MONTH,
+    config.EXPIRATION
+  );
+
   // Obter as melhores operações para garantir a rentabilidade
   const bestStrikesCall = calculateStrikesByAward(
     strikeMinCall,
     "CALL",
-    config.EXPECTED_RETURN_MONTH
+    expectedReturnOperation
   );
   const bestStrikesPut = calculateStrikesByAward(
     strikeMinPut,
     "PUT",
-    config.EXPECTED_RETURN_MONTH
+    expectedReturnOperation
   );
 
   // Exibir os melhores strikes para call e put
-  console.log(`CALL >= ${strikeMinCall.toFixed(2)}`, bestStrikesCall);
-  console.log(`PUT <= ${strikeMinPut.toFixed(2)}`, bestStrikesPut);
+  console.log(`CALL >= ${strikeMinCall.toFixed(2)}`, JSON.stringify(bestStrikesCall, null, 2));
+  console.log(`PUT <= ${strikeMinPut.toFixed(2)}`, JSON.stringify(bestStrikesPut, null, 2));
 };
 
 const config = {
