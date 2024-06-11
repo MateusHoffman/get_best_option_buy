@@ -108,14 +108,9 @@ export function calculateAward(strike, expectedReturn, status) {
   const result = {};
 
   for (const [index, award] of possibleAwards.entries()) {
-    const lowestStrike =
-      status === "PUT"
-        ? Math.ceil((award / expectedReturn) * 100) / 100
-        : strike;
+    const lowestStrike = Math.ceil((award / expectedReturn) * 100) / 100;
     const biggestStrike =
-      status === "CALL"
-        ? Math.floor(((award + 0.0099999) / expectedReturn) * 100) / 100
-        : strike;
+      Math.floor(((award + 0.0099999) / expectedReturn) * 100) / 100;
 
     result[award.toFixed(2)] = `strike >= ${formatNumber(
       lowestStrike.toFixed(2)
