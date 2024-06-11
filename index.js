@@ -1,9 +1,9 @@
 import { get_price_variation } from "./src/utils/get_price_variation.js";
 import {
-  calculateAward,
   calculateBusinessDays,
   calculateStrike,
   getExpectedReturnOperation,
+  resultMessageGenerator,
 } from "./src/utils/utils.js";
 
 const fixed = {
@@ -23,7 +23,7 @@ const get_best_option_buy = async (config) => {
   );
 
   // Obter o strike mínimo de call e de put
-  const { strikeMinCall, strikeMinPut } = await calculateStrike(
+  const { bestStrikeCall, bestStrikePut } = await calculateStrike(
     config.TICKER,
     variationMinCall,
     variationMinPut
@@ -34,15 +34,25 @@ const get_best_option_buy = async (config) => {
     config.EXPIRATION
   );
 
-  const awardCall = calculateAward(strikeMinCall, expectedReturn, "CALL");
-  const awardPut = calculateAward(strikeMinPut, expectedReturn, "PUT");
-  console.log(`CALL >= ${strikeMinCall.toFixed(2)}`, awardCall);
-  console.log(`PUT <= ${strikeMinPut.toFixed(2)}`, awardPut);
+  resultMessageGenerator(
+    bestStrikeCall,
+    expectedReturn,
+    config.STRIKE_AVAILABLE_CALL,
+    "CALL"
+  );
+  resultMessageGenerator(
+    bestStrikePut,
+    expectedReturn,
+    config.STRIKE_AVAILABLE_PUT,
+    "PUT"
+  );
 };
 
 const config = {
   TICKER: "CIEL3",
   EXPIRATION: "21/06/2024",
+  STRIKE_AVAILABLE_CALL: 5.87,
+  STRIKE_AVAILABLE_PUT: null,
 };
 
 get_best_option_buy({ ...config, ...fixed });

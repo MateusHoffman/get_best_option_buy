@@ -6,7 +6,7 @@ export const get_price_variation = async (TICKER, PERIOD, CHANCE_EXERCISED) => {
   const allPrice = await getAllPriceByTicker(TICKER)
   // FORMATAR LISTA DE PREÇOS
   const allPriceFormatted = formatListPrice(allPrice)
-  console.log(`Cotação atual é: ${allPriceFormatted[0]}`);
+  console.log('Cotação atual é:', allPriceFormatted[0]);
   // GERAR LISTA DE VARIAÇÕES
   const listVariation = getListVariation(allPriceFormatted, PERIOD)
   // DELETADO OS VALORES MENOS FREQUENTES

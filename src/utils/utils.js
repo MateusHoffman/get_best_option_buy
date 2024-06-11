@@ -61,12 +61,12 @@ export const calculateStrike = async (
   // Obter o preço atual diretamente do array formatado
   const currentPrice = allPriceFormatted[0];
 
-  // Calcular strikeMinCall e strikeMinPut em uma única linha para cada um
-  const strikeMinCall = currentPrice * (1 + variationMinCall / 100);
-  const strikeMinPut = currentPrice * (1 + variationMinPut / 100);
+  // Calcular bestStrikeCall e bestStrikePut em uma única linha para cada um
+  const bestStrikeCall = currentPrice * (1 + variationMinCall / 100);
+  const bestStrikePut = currentPrice * (1 + variationMinPut / 100);
 
   // Retornar o resultado como um objeto
-  return { strikeMinCall, strikeMinPut };
+  return { bestStrikeCall, bestStrikePut };
 };
 
 export function calculateStrikesByAward(numero, type, expectedReturnOperation) {
@@ -95,28 +95,58 @@ export function calculateStrikesByAward(numero, type, expectedReturnOperation) {
   }, {});
 }
 
-export function calculateAward(strike, expectedReturn, status) {
-  // Calcular o prêmio multiplicando strike por expectedReturn
+export function calculateAward(strike, expectedReturn, strikeAvailable) {
+  console.log("calculateAward: ");
+  console.log("strike: ", strike);
+  console.log("expectedReturn: ", expectedReturn);
+  console.log("strikeAvailable: ", strikeAvailable);
+  console.log("----");
   const award = strike * expectedReturn;
-  const roundedAward = Math.floor(award * 100) / 100;
+  const awardAvailable = strikeAvailable * expectedReturn;
 
-  const possibleAwards = Array.from(
-    { length: 3 },
-    (_, i) => roundedAward + i * 0.01
+  // const result = {};
+  // result[strike] = `Prêmio: ${award}`;
+  // strikeAvailable && (result[strike] = `Prêmio: ${awardAvailable}`);
+  // return result;
+  console.log(`Melhor strike: ${strike} && Melhor prêmio: ${award}`);
+  console.log(
+    `Melhor strike: ${strikeAvailable} && Melhor prêmio: ${awardAvailable}`
   );
+}
 
-  const result = {};
+export function resultMessageGenerator(
+  strike,
+  expectedReturn,
+  strikeAvailable,
+  status
+) {
+  console.log("----");
+  const bestAward = strike * expectedReturn;
+  const bestAwardAvailable =
+    strikeAvailable && strikeAvailable * expectedReturn;
 
-  for (const [index, award] of possibleAwards.entries()) {
-    const lowestStrike = Math.ceil((award / expectedReturn) * 100) / 100;
-    const biggestStrike =
-      Math.floor(((award + 0.0099999) / expectedReturn) * 100) / 100;
+  const roundedAward = Math.ceil(bestAward * 100) / 100;
+  const roundedAwardAvailable = Math.ceil(bestAwardAvailable * 100) / 100;
 
-    result[award.toFixed(2)] = `strike >= ${formatNumber(
-      lowestStrike.toFixed(2)
-    )} && strike <= ${formatNumber(biggestStrike.toFixed(2))}`;
-  }
-  return result;
+  console.log(
+    `${status} ${status === "CALL" ? ">=" : "<="}`,
+    +strike.toFixed(2)
+  );
+  console.log(
+    "Melhor Strike:",
+    +strike.toFixed(2),
+    "&&",
+    "Melhor Prêmio:",
+    +roundedAward.toFixed(2)
+  );
+  strikeAvailable &&
+    console.log(
+      "Strike Escolhido:",
+      +strikeAvailable.toFixed(2),
+      "&&",
+      "Melhor Prêmio:",
+      +roundedAwardAvailable.toFixed(2)
+    );
 }
 
 function formatNumber(number) {
