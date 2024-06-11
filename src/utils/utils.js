@@ -149,11 +149,6 @@ export function resultMessageGenerator(
     );
 }
 
-function formatNumber(number) {
-  // Adiciona zero à esquerda se o número tiver apenas uma casa decimal
-  return number.length === 4 ? `0${number}` : number;
-}
-
 export function getExpectedReturnOperation(
   expectedReturnMonth,
   dateExpiration
