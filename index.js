@@ -1,13 +1,13 @@
 import { get_price_variation } from "./src/utils/get_price_variation.js";
 import {
+  calculateAward,
   calculateBusinessDays,
   calculateStrike,
-  calculateStrikesByAward,
   getExpectedReturnOperation,
 } from "./src/utils/utils.js";
 
 const fixed = {
-  CHANCE_EXERCISED: 0.2,
+  CHANCE_EXERCISED: 0.3,
   EXPECTED_RETURN_MONTH: 0.01,
 };
 
@@ -29,26 +29,15 @@ const get_best_option_buy = async (config) => {
     variationMinPut
   );
 
-  const expectedReturnOperation = getExpectedReturnOperation(
+  const expectedReturn = getExpectedReturnOperation(
     config.EXPECTED_RETURN_MONTH,
     config.EXPIRATION
   );
 
-  // Obter as melhores operações para garantir a rentabilidade
-  const bestStrikesCall = calculateStrikesByAward(
-    strikeMinCall,
-    "CALL",
-    expectedReturnOperation
-  );
-  const bestStrikesPut = calculateStrikesByAward(
-    strikeMinPut,
-    "PUT",
-    expectedReturnOperation
-  );
-
-  // Exibir os melhores strikes para call e put
-  console.log(`CALL >= ${strikeMinCall.toFixed(2)}`, JSON.stringify(bestStrikesCall, null, 2));
-  console.log(`PUT <= ${strikeMinPut.toFixed(2)}`, JSON.stringify(bestStrikesPut, null, 2));
+  const awardCall = calculateAward(strikeMinCall, expectedReturn, "CALL");
+  const awardPut = calculateAward(strikeMinPut, expectedReturn, "PUT");
+  console.log(`CALL >= ${strikeMinCall.toFixed(2)}`, awardCall);
+  console.log(`PUT <= ${strikeMinPut.toFixed(2)}`, awardPut);
 };
 
 const config = {

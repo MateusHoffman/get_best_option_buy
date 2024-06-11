@@ -69,33 +69,76 @@ export const calculateStrike = async (
   return { strikeMinCall, strikeMinPut };
 };
 
-export function calculateStrikesByAward(numero, type, EXPECTED_RETURN_MONTH) {
+export function calculateStrikesByAward(numero, type, expectedReturnOperation) {
   // Passo 1: Multiplicar o número pelo retorno esperado e arredondar para cima com 2 casas decimais
-  const resultado = Math.ceil(numero * EXPECTED_RETURN_MONTH * 100) / 100;
+  const resultado = Math.ceil(numero * expectedReturnOperation * 100) / 100;
 
   // Passo 2: Criar um array de 3 números iniciando no resultado do Passo 1, incrementando ou decrementando com base no tipo
   const array = Array.from({ length: 3 }, (_, i) =>
-    (resultado + EXPECTED_RETURN_MONTH * (type === "CALL" ? i : -i)).toFixed(2)
+    (resultado + expectedReturnOperation * (type === "CALL" ? i : -i)).toFixed(
+      2
+    )
   );
 
   // Passo 3: Gerar um objeto com chaves sendo os elementos do array e valores conforme especificado
   return array.reduce((objeto, elemento, index) => {
     // Calcular o valor para a chave atual
-    let valor = `> q ${(elemento / EXPECTED_RETURN_MONTH - 1).toFixed(
+    let valor = `> q ${(elemento / expectedReturnOperation - 1).toFixed(
       2
-    )} e <= ${(index === 0 ? numero : elemento / EXPECTED_RETURN_MONTH).toFixed(
-      2
-    )}`;
+    )} e <= ${(index === 0
+      ? numero
+      : elemento / expectedReturnOperation
+    ).toFixed(2)}`;
     // Adicionar a chave e o valor ao objeto
     objeto[elemento] = valor;
     return objeto;
   }, {});
 }
 
-export function getExpectedReturnOperation(expectedReturnMonth, dateExpiration) {
+export function calculateAward(strike, expectedReturn, status) {
+  // Calcular o prêmio multiplicando strike por expectedReturn
+  const award = strike * expectedReturn;
+  const roundedAward = Math.floor(award * 100) / 100;
+
+  const possibleAwards = Array.from(
+    { length: 3 },
+    (_, i) => roundedAward + i * 0.01
+  );
+
+  const result = {};
+
+  for (const [index, award] of possibleAwards.entries()) {
+    const lowestStrike =
+      status === "PUT"
+        ? Math.ceil((award / expectedReturn) * 100) / 100
+        : strike;
+    const biggestStrike =
+      status === "CALL"
+        ? Math.floor(((award + 0.0099999) / expectedReturn) * 100) / 100
+        : strike;
+
+    result[award.toFixed(2)] = `strike >= ${formatNumber(
+      lowestStrike.toFixed(2)
+    )} && strike <= ${formatNumber(biggestStrike.toFixed(2))}`;
+  }
+  return result;
+}
+
+function formatNumber(number) {
+  // Adiciona zero à esquerda se o número tiver apenas uma casa decimal
+  return number.length === 4 ? `0${number}` : number;
+}
+
+export function getExpectedReturnOperation(
+  expectedReturnMonth,
+  dateExpiration
+) {
   var currentDate = moment();
-  var startDate = moment(dateExpiration, 'DD/MM/YYYY');
-  const returnPerDay = (expectedReturnMonth * 12) / 365
-  const daysDifference = startDate.diff(moment(currentDate, 'DD/MM/YYYY'), 'days');
-  return daysDifference * returnPerDay
+  var startDate = moment(dateExpiration, "DD/MM/YYYY");
+  const returnPerDay = (expectedReturnMonth * 12) / 365;
+  const daysDifference = startDate.diff(
+    moment(currentDate, "DD/MM/YYYY"),
+    "days"
+  );
+  return (daysDifference + 1) * returnPerDay;
 }
