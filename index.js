@@ -21,6 +21,8 @@ const get_best_option_buy = async (config) => {
     businessDays,
     config.CHANCE_EXERCISED
   );
+  console.log(`CALL - Período de ${businessDays} dias, varia cerca de ${variationMinCall}% pra cima`)
+  console.log(`PUT - Período de ${businessDays} dias, varia cerca de ${-variationMinPut}% pra baixo`)
 
   // Obter o strike mínimo de call e de put
   const { bestStrikeCall, bestStrikePut } = await calculateStrike(
@@ -50,8 +52,8 @@ const get_best_option_buy = async (config) => {
 
 const config = {
   TICKER: "CIEL3",
-  EXPIRATION: "21/06/2024",
-  STRIKE_AVAILABLE_CALL: 5.87,
+  EXPIRATION: "19/07/2024",
+  STRIKE_AVAILABLE_CALL: null,
   STRIKE_AVAILABLE_PUT: null,
 };
 
